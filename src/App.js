@@ -170,16 +170,16 @@ export default function App() {
       <CssBaseline />
       {layout === "dashboard" && (
         <>
-          {/* <Sidenav
+          <Sidenav
             color={sidenavColor}
             brand={darkSidenav || darkMode ? brand : brandDark}
             brandName="Argon Dashboard 2 PRO"
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
-          /> */}
+          />
           <Configurator />
-          {/* {configsButton} */}
+          {configsButton}
         </>
       )}
       {layout === "vr" && <Configurator />}

@@ -39,6 +39,7 @@ function Default() {
   const [chartData2, setChartData2] = useState({});
   const [chartData3, setChartData3] = useState({});
   const [pwm, setPwm] = useState(100);
+  const [isOn, setIsOn] = useState(0);
 
   const marks = [
     {
@@ -73,12 +74,11 @@ function Default() {
             response.data.feeds.map((val) => {
               labels.push(val.field1);
               data.push(val.field1);
-              
+
             });
             res.data.feeds.map((val) => {
               data2.push(val.field2);
               labels2.push(val.field2);
-              
             });
 
             setChartData({
@@ -131,35 +131,9 @@ function Default() {
                 },
               },
             });
-
-            // setChartData3({
-            //   labels: labels3,
-            //   datasets: [
-            //     {
-            //       label: "Distance",
-            //       color: "info",
-            //       data: data3,
-            //     },
-            //   ],
-
-            //   // set min range of chart as 0 and step size as 500
-            //   options: {
-            //     // make beginAtZero = true to start chart from 0
-            //     scales: {
-            //       y: {
-            //         beginAtZero: true,
-            //         min: 0,
-            //         max: 5000,
-            //         ticks: {
-            //           stepSize: 500,
-            //         },
-            //       },
-            //     },
-            //   },
-            // });
           });
 
-          axios
+        axios
           .get(
             "https://api.thingspeak.com/channels/1848245/fields/3.json?api_key=4WIAERB6XNBCAE3X&results=30"
           )
@@ -173,12 +147,12 @@ function Default() {
             response.data.feeds.map((val) => {
               labels.push(val.field1);
               data.push(val.field1);
-              
+
             });
             res.data.feeds.map((val) => {
               data3.push(val.field3);
               labels3.push(val.field3);
-              
+
             });
 
             setChartData({
@@ -205,56 +179,6 @@ function Default() {
                 },
               },
             });
-
-            // setChartData2({
-            //   labels: labels2,
-            //   datasets: [
-            //     {
-            //       label: "Distance",
-            //       color: "info",
-            //       data: data2,setChartData2({
-            //   labels: labels2,
-            //   datasets: [
-            //     {
-            //       label: "Distance",
-            //       color: "info",
-            //       data: data2,
-            //     },
-            //   ],
-
-            //   // set min range of chart as 0 and step size as 500
-            //   options: {
-            //     // make beginAtZero = true to start chart from 0
-            //     scales: {
-            //       y: {
-            //         beginAtZero: true,
-            //         min: 0,
-            //         max: 5000,
-            //         ticks: {
-            //           stepSize: 500,
-            //         },
-            //       },
-            //     },
-            //   },
-            // });
-
-            //   ],
-
-            //   // set min range of chart as 0 and step size as 500
-            //   options: {
-            //     // make beginAtZero = true to start chart from 0
-            //     scales: {
-            //       y: {
-            //         beginAtZero: true,
-            //         min: 0,
-            //         max: 5000,
-            //         ticks: {
-            //           stepSize: 500,
-            //         },
-            //       },
-            //     },
-            //   },
-            // });
 
             setChartData3({
               labels: labels3,
@@ -300,7 +224,7 @@ function Default() {
         setVoltage(res.data.feeds[0].field2);
       });
 
-      axios
+    axios
       .get(
         "https://api.thingspeak.com/channels/1848245/fields/3.json?api_key=4WIAERB6XNBCAE3X&results=1"
       )
@@ -309,35 +233,57 @@ function Default() {
       });
   }, []);
 
+  const onChangeOn = (event) => {
+    if (isOn == 1){
+      setIsOn(0)
+    }
+    else{
+      setIsOn(1)
+    }
+  };
+
+  useEffect(() => {
+    console.log(isOn)
+    axios.get('https://api.thingspeak.com/update?api_key=QPVP3YPMXCF4WKV6&field1=' + isOn)
+        .then(response => {
+            console.log("value changed")
+            // console.log(response.status)
+            // console.log(response.data)
+        })
+  }, [isOn])
 
 
   return (
     <DashboardLayout>
-      <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} md={6} lg={1}></Grid>
-        <Grid item xs={12} md={6} lg={4}>
+
+      <Grid container spacing={4} mb={4}></Grid>
+      
+
+      <Grid item xs={12} md={6} lg={3}>
+        <Grid item xs={12} md={4} lg={3}>
           <DetailedStatisticsCard
-            title="Latest Distance from Sensor 1"
+            title="Latest Distance from Sensor 1 - Front "
             count={rpm}
             icon={{ color: "info", component: <i className="ni ni-money-coins" /> }}
           />
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
           <DetailedStatisticsCard
-            title="Latest Distance from Sensor 2"
+            title="Latest Distance from Sensor 2 - Left"
             count={voltage}
             icon={{ color: "error", component: <i className="ni ni-world" /> }}
           />
         </Grid>
         <Grid item xs={12} md={6} lg={4}>
           <DetailedStatisticsCard
-            title="Latest Distance from Sensor 3"
+            title="Latest Distance from Sensor 3 -  Right"
             count={S3}
             icon={{ color: "error", component: <i className="ni ni-world" /> }}
           />
         </Grid>
         
       </Grid>
+
       <Grid container spacing={3} mb={3}>
         <Grid item xs={20} md={20} lg={20}></Grid>
         <Grid item xs={12} lg={20}>
@@ -346,11 +292,12 @@ function Default() {
             // send options to chart
             //options={chartData.options}
             chart={chartData}
+
             // make chart begin at zero
             beginAtZero
-            
-            
-            //options={{ maintainAspectRatio: false }}
+
+
+          //options={{ maintainAspectRatio: false }}
           />
         </Grid>
       </Grid>
@@ -363,10 +310,10 @@ function Default() {
             //options={chartData.options}
             chart={chartData2}
             // make chart begin at zero
-            beginAtZero = {true}
+            beginAtZero={true}
             // use options from SetChartData
             options={chartData2.options}
-            //options={{ maintainAspectRatio: false }}
+          //options={{ maintainAspectRatio: false }}
           />
         </Grid>
       </Grid>
@@ -379,31 +326,17 @@ function Default() {
             //options={chartData.options}
             chart={chartData3}
             // make chart begin at zero
-            beginAtZero = {true}
+            beginAtZero={true}
             // use options from SetChartData
             options={chartData3.options}
-            //options={{ maintainAspectRatio: false }}
+          //options={{ maintainAspectRatio: false }}
           />
         </Grid>
       </Grid>
 
-      {/* <Grid container spacing={3} mb={3}>
-                    <Grid item xs={12} md={6} lg={1}>
-                    </Grid>
-                    <Grid item>
-                        <Box sx={{ width: 300, height: 15 }}>
-                        <Slider
-                            aria-label="Always visible"
-                            defaultValue={100}
-                            step={5}
-                            max={255}
-                            marks={marks}
-                            onChange={val => setPwm(val.target.value)}
-                            valueLabelDisplay="on"
-                        />
-                        </Box>
-                    </Grid>
-                </Grid> */}
+      <Grid container spacing={4} mb={4}>
+        <button onClick={onChangeOn}>{ isOn ? 'Off' : 'On' }</button>
+      </Grid>
     </DashboardLayout>
   );
 }
