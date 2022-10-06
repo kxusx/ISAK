@@ -13,8 +13,9 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useEffect, useState } from "react";
-
+import { useEffect} from "react";
+import { useState } from "react";
+import { Button } from "react-bootstrap";
 // react-router-dom components
 import { useLocation, NavLink } from "react-router-dom";
 
@@ -39,6 +40,8 @@ import SidenavFooter from "examples/Sidenav/SidenavFooter";
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
 import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
 
+import axios from "axios";
+
 // Argon Dashboard 2 MUI context
 import { useArgonController, setMiniSidenav } from "context";
 
@@ -48,8 +51,27 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const location = useLocation();
   const { pathname } = location;
   const itemName = pathname.split("/").slice(1)[0];
-
+  const [isOn, setIsOn] = useState(0);
   const closeSidenav = () => setMiniSidenav(dispatch, true);
+
+  const onChangeOn = (event) => {
+    if (isOn == 1) {
+      setIsOn(0)
+    }
+    else {
+      setIsOn(1)
+    }
+  };
+  
+  useEffect(() => {
+    console.log(isOn)
+    axios.get('https://api.thingspeak.com/update?api_key=QPVP3YPMXCF4WKV6&field1=' + isOn)
+      .then(response => {
+        console.log("value changed")
+        // console.log(response.status)
+        // console.log(response.data)
+      })
+  }, [isOn])
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -154,7 +176,13 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       </ArgonBox> */}
       <Divider light={darkSidenav} />
       <List>{renderRoutes}</List>
-
+      <Button
+            variant="default"
+            style={{ color: "black", background: "red" }}
+            onClick={onChangeOn}
+          >
+            {isOn ? '------     Off     ------' : '-----      On      -------'}
+      </Button>
       {/* <ArgonBox pt={1} mt="auto" mb={2} mx={2}>
         <SidenavFooter />
       </ArgonBox> */}

@@ -88,6 +88,8 @@ export default styled(Drawer)(({ theme, ownerState }) => {
       backgroundColor: transparent.main,
 
       ...(miniSidenav ? drawerCloseStyles() : drawerOpenStyles()),
+
+     
     },
   };
 });
